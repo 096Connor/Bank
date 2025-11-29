@@ -1,0 +1,14 @@
+POST http://localhost:8080/api/klienci
+Content-Type: application/json
+
+{
+  "imie": "Jan",
+  "nazwisko": "Kowalski",
+  "dataUrodzenia": "1990-05-10",
+  "pesel": "90051012345",
+  "typKlienta": "STANDARD",
+  "adresId": 1,
+  "nrTel": "123456789",
+  "mail": "jan.kowalski@example.com",
+  "narodowosc": "Polska"
+}

@@ -1,4 +1,4 @@
-package pl.bj.bank.controllers;
+package pl.bj.bank.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    @GetMapping("/hello")
+    @GetMapping("/test")
     public String hello() {
         return "Działa!!!a";
     }
