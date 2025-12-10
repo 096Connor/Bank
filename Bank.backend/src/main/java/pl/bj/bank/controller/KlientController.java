@@ -6,6 +6,8 @@ import pl.bj.bank.dto.CreateKlientRequest;
 import pl.bj.bank.model.Klient;
 import pl.bj.bank.service.KlientService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/klienci")
 @RequiredArgsConstructor
@@ -16,5 +18,9 @@ public class KlientController {
     @PostMapping
     public Klient create(@RequestBody CreateKlientRequest request) {
         return klientService.create(request);
+    }
+    @GetMapping
+    public List<Klient> getAll() {
+        return klientService.getAll();
     }
 }

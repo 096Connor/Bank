@@ -7,6 +7,9 @@ import pl.bj.bank.mapper.KlientMapper;
 import pl.bj.bank.model.Klient;
 import pl.bj.bank.repository.KlientRepository;
 
+import java.util.List;
+
+
 @Service
 @RequiredArgsConstructor
 public class KlientService {
@@ -18,4 +21,8 @@ public class KlientService {
         Klient klient = klientMapper.toEntity(dto);
         return klientRepository.save(klient);
     }
+    public List<Klient> getAll() {
+        return klientRepository.findAll();
+    }
+
 }
