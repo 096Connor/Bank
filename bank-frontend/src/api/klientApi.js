@@ -1,12 +1,13 @@
-import axios from "axios";
+import axiosClient from "./axiosClient";
 
-const API_URL = "http://localhost:8080/api/klienci";
+const API_URL = "/klienci";
 
 export const createKlient = async (data) => {
-  return axios.post(API_URL, data);
+  const response = await axiosClient.post(API_URL, data);
+  return response.data;
 };
 
 export const getKlienci = async () => {
-  const response = await axios.get(API_URL);
+  const response = await axiosClient.get(API_URL);
   return response.data;
 };

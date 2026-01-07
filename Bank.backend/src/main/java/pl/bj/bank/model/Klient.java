@@ -38,4 +38,7 @@ public class Klient {
     private String nrTel;
     private String mail;
     private String narodowosc;
+
+    @Column(name = "pin_hash")
+    private String pinHash;
 }

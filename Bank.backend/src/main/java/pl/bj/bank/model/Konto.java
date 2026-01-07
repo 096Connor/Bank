@@ -1,10 +1,12 @@
 package pl.bj.bank.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "konto")
+@Data
 public class Konto {
 
     @Id

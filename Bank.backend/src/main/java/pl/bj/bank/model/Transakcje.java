@@ -38,4 +38,76 @@ public class Transakcje {
     private String status;
 
     // getters + setters
+
+    public Integer getIdTransakcji() {
+        return idTransakcji;
+    }
+
+    public void setIdTransakcji(Integer idTransakcji) {
+        this.idTransakcji = idTransakcji;
+    }
+
+    public Konto getKonto() {
+        return konto;
+    }
+
+    public void setKonto(Konto konto) {
+        this.konto = konto;
+    }
+
+    public LocalDateTime getDataTransakcji() {
+        return dataTransakcji;
+    }
+
+    public void setDataTransakcji(LocalDateTime dataTransakcji) {
+        this.dataTransakcji = dataTransakcji;
+    }
+
+    public String getTypTransakcji() {
+        return typTransakcji;
+    }
+
+    public void setTypTransakcji(String typTransakcji) {
+        this.typTransakcji = typTransakcji;
+    }
+
+    public Double getKwota() {
+        return kwota;
+    }
+
+    public void setKwota(Double kwota) {
+        this.kwota = kwota;
+    }
+
+    public String getWaluta() {
+        return waluta;
+    }
+
+    public void setWaluta(String waluta) {
+        this.waluta = waluta;
+    }
+
+    public String getOpis() {
+        return opis;
+    }
+
+    public void setOpis(String opis) {
+        this.opis = opis;
+    }
+
+    public Double getSaldoPo() {
+        return saldoPo;
+    }
+
+    public void setSaldoPo(Double saldoPo) {
+        this.saldoPo = saldoPo;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

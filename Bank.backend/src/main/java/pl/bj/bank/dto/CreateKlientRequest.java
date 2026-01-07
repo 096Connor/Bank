@@ -10,8 +10,9 @@ public class CreateKlientRequest {
     private String nazwisko;
     private LocalDate dataUrodzenia;
     private String pesel;
+    private String pin;
     private String typKlienta;
-    private Long adresId; // tutaj id adresu
+    private Long adresId;
     private String nrTel;
     private String mail;
     private String narodowosc;

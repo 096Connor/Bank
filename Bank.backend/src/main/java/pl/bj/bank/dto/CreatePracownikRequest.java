@@ -1,20 +1,20 @@
 package pl.bj.bank.dto;
 
 import lombok.Data;
-
 import java.time.LocalDate;
 
 @Data
-public class CreatePracownikRequest{
+public class CreatePracownikRequest {
 
-    private Integer idPracownika;
     private String imie;
     private String nazwisko;
     private String stanowisko;
+
     private String login;
-    private String hasloHash;
-    private Integer oddzial;
+    private String haslo;          // 👈 PLAIN PASSWORD
+
+    private Integer oddzial;       // id_oddzialu
+
     private LocalDate dataZatrudnienia;
     private Boolean aktywny;
-
 }

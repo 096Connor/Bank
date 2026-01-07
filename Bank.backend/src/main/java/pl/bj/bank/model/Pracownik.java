@@ -2,7 +2,9 @@ package pl.bj.bank.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "pracownik")
 public class Pracownik {
