@@ -1,8 +1,10 @@
 package pl.bj.bank.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "kontakty_przelewowe")
 public class KontaktyPrzelewowe {
 

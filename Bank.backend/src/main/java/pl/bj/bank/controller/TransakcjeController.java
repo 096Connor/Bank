@@ -37,6 +37,7 @@ public class TransakcjeController {
             if (t.getKonto() != null && t.getKonto().getTypKonta() != null) {
                 r.setTypKonta(t.getKonto().getTypKonta().toString());
             }
+
             return ResponseEntity.ok(r);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
@@ -66,10 +67,22 @@ public class TransakcjeController {
                 if (t.getKonto() != null && t.getKonto().getTypKonta() != null) {
                     r.setTypKonta(t.getKonto().getTypKonta().toString());
                 }
-                // attempt to find related account via opposite transfer record (not guaranteed)
-                // if transaction is TRANSFER_IN or TRANSFER_OUT, try to infer related account from description or other data in future
+                r.setRelatedAccount(t.getRelatedAccount());
                 return r;
             }).toList();
+            // Set related account for TRANSFER_OUT by finding matching TRANSFER_IN
+            for (TransakcjeResponse r : resp) {
+                if ("TRANSFER_OUT".equals(r.getTypTransakcji())) {
+                    TransakcjeResponse matchingIn = resp.stream()
+                        .filter(other -> "TRANSFER_IN".equals(other.getTypTransakcji()) &&
+                                         other.getKwota().equals(-r.getKwota()) &&
+                                         other.getDataTransakcji().equals(r.getDataTransakcji()))
+                        .findFirst().orElse(null);
+                    if (matchingIn != null) {
+                        r.setRelatedAccount(matchingIn.getNrKonta());
+                    }
+                }
+            }
             return ResponseEntity.ok(resp);
         } catch (Exception ex) {
             return ResponseEntity.status(500).body("Błąd serwera");

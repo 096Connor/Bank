@@ -30,5 +30,10 @@ public class AlertSystemowy {
     @Column(name = "id_powiazania")
     private Integer idPowiazania;
 
+    public void setStatus(String string) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setStatus'");
+    }
+
     // getters and setters
 }

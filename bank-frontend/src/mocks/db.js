@@ -142,7 +142,28 @@ const klienci = [
 ];
 
 // Konto, transakcje and others are empty in dump; provide empty arrays for now
-const konta = [];
+const konta = [
+  {
+    id: 1,
+    nrKonta: "12345678901234567890123456",
+    saldo: 1000.0,
+    waluta: "PLN",
+    id_klienta: 10,
+    typKonta: "STANDARD",
+    dataOtwarcia: "2025-01-01",
+    status: "AKTYWNY"
+  },
+  {
+    id: 2,
+    nrKonta: "12345678901234567890123457",
+    saldo: 500.0,
+    waluta: "PLN",
+    id_klienta: 10,
+    typKonta: "OSZCZEDNOSCIOWE",
+    dataOtwarcia: "2025-01-01",
+    status: "AKTYWNY"
+  }
+];
 const transakcje = [];
 const kontaktyPrzelewowe = [];
 const karty = [];

@@ -2,8 +2,10 @@ package pl.bj.bank.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "raty_kredytu")
 public class RatyKredytu {
 

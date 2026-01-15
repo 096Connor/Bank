@@ -3,7 +3,7 @@ package pl.bj.bank.dto;
 import lombok.Data;
 
 @Data
-public class KlientResponse {
+public class KlientLoginResponse {
     private Long id;
     private String imie;
     private String nazwisko;
@@ -12,5 +12,4 @@ public class KlientResponse {
     private String statusKonta;
     private String nrTel;
     private String mail;
-    private String narodowosc; // ← DODANE POLE
 }

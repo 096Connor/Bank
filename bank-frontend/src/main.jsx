@@ -2,11 +2,10 @@ import React, { useMemo, useState } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import { SnackbarProvider } from "notistack";
-import AuthProvider from "./auth/AuthProvider";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import ColorModeContext from "./theme/ColorModeContext";
-
-// export const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+import { BrowserRouter } from "react-router-dom";
+import AuthProvider from "./auth/AuthProvider";
 
 function Root() {
   const [mode, setMode] = useState(() => localStorage.getItem("themeMode") || "light");
@@ -42,11 +41,13 @@ function Root() {
       <ColorModeContext.Provider value={colorMode}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <AuthProvider>
-            <SnackbarProvider maxSnack={3}>
-              <App />
-            </SnackbarProvider>
-          </AuthProvider>
+          <BrowserRouter>
+            <AuthProvider>
+              <SnackbarProvider maxSnack={3}>
+                <App />
+              </SnackbarProvider>
+            </AuthProvider>
+          </BrowserRouter>
         </ThemeProvider>
       </ColorModeContext.Provider>
     </React.StrictMode>

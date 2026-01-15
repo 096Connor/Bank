@@ -55,8 +55,11 @@ export default function TransactionsList({ transactions }) {
                   {t.waluta}
                 </Typography>
                 <Typography sx={{ fontSize: "0.85rem", color: theme.palette.text.secondary }}>
-                  {t.klientImie ? `${t.klientImie} ${t.klientNazwisko}` : ""}{" "}
-                  {t.typKonta ? `• ${t.typKonta}` : ""}
+                  {t.typTransakcji && t.typTransakcji.startsWith("TRANSFER")
+                    ? `Przelew na konto: ${t.relatedAccount} Saldo po: ${t.saldoPo}`
+                    : `${t.klientImie ? `${t.klientImie} ${t.klientNazwisko}` : ""} ${
+                        t.typKonta ? `• ${t.typKonta}` : ""
+                      }`}
                 </Typography>
               </div>
             </Box>

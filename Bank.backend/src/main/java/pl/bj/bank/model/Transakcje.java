@@ -37,6 +37,9 @@ public class Transakcje {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "related_account")
+    private Long relatedAccount;
+
     // getters + setters
 
     public Integer getIdTransakcji() {
@@ -109,5 +112,13 @@ public class Transakcje {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Long getRelatedAccount() {
+        return relatedAccount;
+    }
+
+    public void setRelatedAccount(Long relatedAccount) {
+        this.relatedAccount = relatedAccount;
     }
 }

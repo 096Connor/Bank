@@ -3,8 +3,10 @@ package pl.bj.bank.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "kredyt")
 public class Kredyt {
 

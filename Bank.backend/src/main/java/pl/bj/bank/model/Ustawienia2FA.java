@@ -1,8 +1,10 @@
 package pl.bj.bank.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "ustawienia_2fa")
 public class Ustawienia2FA {
 

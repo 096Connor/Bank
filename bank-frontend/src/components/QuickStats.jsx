@@ -1,8 +1,15 @@
 import React from "react";
 import { Grid, Paper, Typography } from "@mui/material";
 
-export default function QuickStats({ accounts, theme }) {
+export default function QuickStats({ accounts, theme, lastTransaction }) {
   const totalSaldo = accounts.reduce((s, a) => s + (a.saldo || 0), 0);
+
+  const lastTransactionValue = lastTransaction
+    ? `${lastTransaction.kwota.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })} ${lastTransaction.waluta}`
+    : "—";
 
   const quickStats = [
     {
@@ -13,7 +20,7 @@ export default function QuickStats({ accounts, theme }) {
       })} ${accounts[0]?.waluta || "PLN"}`,
       icon: "💰"
     },
-    { label: "Ostatnia transakcja", value: "—", icon: "📊" }
+    { label: "Ostatnia transakcja", value: lastTransactionValue, icon: "📊" }
   ];
 
   return (

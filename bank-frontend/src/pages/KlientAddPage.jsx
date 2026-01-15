@@ -49,12 +49,7 @@ export default function KlientAddPage() {
         kraj: newAdres.kraj || null
       };
       const savedAdres = await createAdres(adresPayload);
-      const adresId =
-        savedAdres.id ||
-        savedAdres.id_adres ||
-        savedAdres.idAdres ||
-        savedAdres.ID ||
-        savedAdres.Id;
+      const adresId = savedAdres.id;
 
       const payload = {
         imie: form.imie,

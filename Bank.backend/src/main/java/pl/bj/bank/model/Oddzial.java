@@ -1,9 +1,11 @@
 package pl.bj.bank.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
 @Table(name = "oddzial")
+@Data
 public class Oddzial {
 
     @Id

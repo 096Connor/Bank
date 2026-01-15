@@ -3,88 +3,77 @@ import { Box, Container, Typography, Grid, Paper, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import QuickStats from "../components/QuickStats";
 import TransferPanel from "../components/TransferPanel";
+import TransactionsList from "../components/TransactionsList";
+import KlientHeader from "../components/KlientHeader";
 import axiosClient from "../api/axiosClient";
 import mockApi from "../api/mockApi";
 import { useTheme } from "@mui/material/styles";
-import KlientHeader from "../components/KlientHeader";
-import TransactionsList from "../components/TransactionsList";
 
 export default function KlientHomePage() {
   const navigate = useNavigate();
-  const klient = JSON.parse(localStorage.getItem("klient") || "{}");
-
-  const handleLogout = () => {
-    localStorage.removeItem("klient");
-    navigate("/klient-login");
-  };
-
   const theme = useTheme();
+
+  const storedKlient = localStorage.getItem("klient");
+  const klient = storedKlient && storedKlient !== "undefined" ? JSON.parse(storedKlient) : null;
 
   const [accounts, setAccounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [selectedAccount, setSelectedAccount] = useState(null);
 
-  // fetch accounts for logged-in klient
   useEffect(() => {
-    (async () => {
-      try {
-        if (klient && klient.id) {
-          const res = await axiosClient.get(`/klienci/${klient.id}/konta`);
-          setAccounts(res.data || []);
-        }
-      } catch {
-        try {
-          if (klient && klient.id) {
-            const accs = await mockApi.fetchKontaByKlientId(klient.id);
-            setAccounts(accs || []);
-          }
-        } catch (err) {
-          console.error("Nie udało się pobrać kont klienta (mock)", err);
-        }
-      }
-    })();
-  }, [klient]);
+    if (!klient) navigate("/klient-login");
+  }, [klient, navigate]);
 
-  // fetch transactions for primary account
-  useEffect(() => {
-    (async () => {
-      try {
-        if (accounts && accounts[0]) {
-          const res = await axiosClient.get(`/transakcje/konto/${accounts[0].nrKonta}`);
-          setTransactions(res.data || []);
-        }
-      } catch {
-        try {
-          if (accounts && accounts[0]) {
-            const mockT = await mockApi.fetchTransakcjeByKonto(accounts[0].nrKonta);
-            setTransactions(mockT || []);
-          }
-        } catch (err) {
-          console.error("Nie udało się pobrać transakcji (mock)", err);
-        }
-      }
-    })();
-  }, [accounts]);
+  const handleLogout = () => {
+    localStorage.removeItem("klient");
+    localStorage.removeItem("token");
+    navigate("/klient-login");
+  };
 
-  async function refreshAccounts() {
+  const fetchAccounts = async () => {
+    if (!klient?.id) return;
     try {
-      if (klient && klient.id) {
-        const acc = await axiosClient.get(`/klienci/${klient.id}/konta`);
-        setAccounts(acc.data || []);
-      }
-    } catch (e) {
+      const res = await axiosClient.get(`/klienci/${klient.id}/konta`);
+      setAccounts(res.data || []);
+      setSelectedAccount(res.data[0] || null);
+    } catch (err) {
+      console.warn("Błąd pobierania kont z backend, użycie mock:", err);
       try {
-        if (klient && klient.id) {
-          const accs = await mockApi.fetchKontaByKlientId(klient.id);
-          setAccounts(accs || []);
-        }
-      } catch (_) {
-        // ignore
+        const mockAccounts = await mockApi.fetchKontaByKlientId(klient.id);
+        setAccounts(mockAccounts || []);
+        setSelectedAccount(mockAccounts[0] || null);
+      } catch (mockErr) {
+        console.error("Nie udało się pobrać kont (mock)", mockErr);
       }
     }
-  }
+  };
 
-  // transfer UI removed from home; handled in profile or separate flow
-  // accountInfo moved to AccountList component
+  const fetchTransactions = async (kontoNr) => {
+    if (!kontoNr) return;
+    try {
+      const res = await axiosClient.get(`/transakcje/konto/${kontoNr}`);
+      setTransactions(res.data || []);
+    } catch (err) {
+      console.warn("Błąd pobierania transakcji z backend, użycie mock:", err);
+      try {
+        const mockTrans = await mockApi.fetchTransakcjeByKonto(kontoNr);
+        setTransactions(mockTrans || []);
+      } catch (mockErr) {
+        console.error("Nie udało się pobrać transakcji (mock)", mockErr);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, [klient]);
+  useEffect(() => {
+    if (selectedAccount?.nrKonta) fetchTransactions(selectedAccount.nrKonta);
+  }, [selectedAccount]);
+
+  const refreshAccounts = async () => {
+    await fetchAccounts();
+  };
 
   return (
     <Box sx={{ minHeight: "100vh", background: theme.palette.background.default }}>
@@ -97,20 +86,29 @@ export default function KlientHomePage() {
             sx={{
               fontWeight: 800,
               color: theme.palette.text.primary,
-              backgroundClip: "text",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               mb: 1
             }}
           >
-            Witaj, {klient.imie} {klient.nazwisko}
+            Witaj, {klient?.imie} {klient?.nazwisko}
           </Typography>
           <Typography variant="h6" sx={{ color: "#666", fontWeight: 400 }}>
             Zarządzaj swoim kontem bankowym
           </Typography>
         </Box>
 
-        <QuickStats accounts={accounts} theme={theme} />
+        <QuickStats
+          accounts={accounts}
+          theme={theme}
+          lastTransaction={
+            transactions.length > 0
+              ? [...transactions].sort(
+                  (a, b) => new Date(b.dataTransakcji) - new Date(a.dataTransakcji)
+                )[0]
+              : null
+          }
+        />
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
@@ -118,7 +116,13 @@ export default function KlientHomePage() {
           </Grid>
 
           <Grid item xs={12} md={4}>
-            <TransferPanel accounts={accounts} onSuccess={refreshAccounts} klient={klient} />
+            <TransferPanel
+              accounts={accounts}
+              onSuccess={refreshAccounts}
+              klient={klient}
+              defaultFromAccount={selectedAccount?.nrKonta}
+            />
+
             <Paper sx={{ p: 3, borderRadius: 2, border: `1px solid ${theme.palette.divider}` }}>
               <Typography variant="h6" sx={{ fontWeight: 700, mb: 2, color: "#667eea" }}>
                 ℹ️ Szybka pomoc

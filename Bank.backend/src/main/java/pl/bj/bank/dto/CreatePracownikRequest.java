@@ -1,5 +1,6 @@
 package pl.bj.bank.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDate;
 
@@ -13,6 +14,7 @@ public class CreatePracownikRequest {
     private String login;
     private String haslo;          // 👈 PLAIN PASSWORD
 
+    @NotNull
     private Integer oddzial;       // id_oddzialu
 
     private LocalDate dataZatrudnienia;

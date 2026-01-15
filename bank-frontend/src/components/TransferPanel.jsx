@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Paper,
   Typography,
@@ -12,11 +12,11 @@ import {
   Button
 } from "@mui/material";
 import axiosClient from "../api/axiosClient";
-import mockApi from "../api/mockApi";
 import { useSnackbar } from "notistack";
 
-export default function TransferPanel({ accounts = [], onSuccess = () => {}, klient }) {
-  const [fromKonto, setFromKonto] = useState(() => accounts[0]?.nrKonta || "");
+export default function TransferPanel({ accounts = [], onSuccess = () => {}, defaultFromAccount }) {
+  const defaultFrom = defaultFromAccount || accounts[0]?.nrKonta || "";
+  const [fromKonto, setFromKonto] = useState(String(defaultFrom));
   const [toNrKonta, setToNrKonta] = useState("");
   const [kwota, setKwota] = useState("");
   const [waluta] = useState("PLN");

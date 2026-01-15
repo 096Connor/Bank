@@ -10,4 +10,5 @@ public class PracownikResponse {
     private String stanowisko;
     private String login;
     private Boolean aktywny;
+    
 }
