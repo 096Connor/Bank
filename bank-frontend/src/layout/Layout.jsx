@@ -23,10 +23,13 @@ export default function Layout({ children }) {
       <AppBar
         position="static"
         sx={{
-          backgroundColor: theme.palette.primary.main,
+          background:
+            theme.palette.mode === "dark"
+              ? "linear-gradient(135deg, #1f2937 0%, #111827 100%)"
+              : "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
           color: theme.palette.primary.contrastText,
           boxShadow: "0 4px 12px rgba(2,6,23,0.24)",
-          backdropFilter: "blur(6px)"
+          backdropFilter: "blur(8px)"
         }}
       >
         <Toolbar sx={{ py: 1.5 }}>
@@ -36,14 +39,15 @@ export default function Layout({ children }) {
               flexGrow: 1,
               fontWeight: 700,
               letterSpacing: "2px",
-              fontSize: "1.5rem"
+              fontSize: "1.5rem",
+              color: "#fff"
             }}
           >
             💳 BANK
           </Typography>
 
           {user && (
-            <Typography variant="body2" sx={{ mr: 3, opacity: 0.9 }}>
+            <Typography variant="body2" sx={{ mr: 3, color: theme.palette.text.secondary }}>
               {user.login}
             </Typography>
           )}
@@ -59,7 +63,14 @@ export default function Layout({ children }) {
             sx={{
               mx: 1,
               fontWeight: 600,
-              "&:hover": { backgroundColor: "rgba(255,255,255,0.15)" }
+              borderRadius: 1,
+              color: theme.palette.mode === "dark" ? "#e0e0e0" : "#fff",
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255,255,255,0.15)"
+                    : "rgba(255,255,255,0.25)"
+              }
             }}
           >
             Panel
@@ -72,7 +83,14 @@ export default function Layout({ children }) {
             sx={{
               mx: 1,
               fontWeight: 600,
-              "&:hover": { backgroundColor: "rgba(255,255,255,0.15)" }
+              borderRadius: 1,
+              color: theme.palette.mode === "dark" ? "#e0e0e0" : "#fff",
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark"
+                    ? "rgba(255,255,255,0.15)"
+                    : "rgba(255,255,255,0.25)"
+              }
             }}
           >
             Nowy klient
@@ -84,8 +102,14 @@ export default function Layout({ children }) {
             sx={{
               mx: 1,
               fontWeight: 600,
-              backgroundColor: "rgba(255,255,255,0.2)",
-              "&:hover": { backgroundColor: "rgba(255,255,255,0.3)" }
+              borderRadius: 1,
+              color: theme.palette.mode === "dark" ? "#fff" : "#fff",
+              backgroundColor:
+                theme.palette.mode === "dark" ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.25)",
+              "&:hover": {
+                backgroundColor:
+                  theme.palette.mode === "dark" ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.35)"
+              }
             }}
           >
             Wyloguj

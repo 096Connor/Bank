@@ -1,46 +1,11 @@
 import axiosClient from "./axiosClient";
 
-/**
- * Logowanie pracownika
- * @param {Object} credentials - { email, password }
- * @returns {Promise<Object>} - dane pracownika
- */
-export const loginPracownik = async (credentials) => {
-  const res = await axiosClient.post("/pracownicy/login", credentials);
-  return res.data;
-};
-
-/**
- * Logowanie klienta
- * @param {Object} credentials - { pesel, pin }
- * @returns {Promise<Object>} - dane klienta
- */
-export const loginKlient = async (credentials) => {
-  const res = await axiosClient.post("/klienci/login", credentials);
-  return res.data;
-};
-
-/**
- * Alias login dla kompatybilności
- * Możesz go używać wszędzie jako "login"
- * Domyślnie loguje pracownika – zmień jeśli chcesz
- */
-export const login = async (credentials) => {
-  // Jeśli chcesz, żeby domyślnie logował klienta, zamień na loginKlient
-  return loginPracownik(credentials);
-};
-
-/**
- * Wylogowanie
- */
-export const logout = async () => {
-  await axiosClient.post("/pracownicy/logout");
-};
-
-/**
- * Pobranie danych aktualnie zalogowanego pracownika
- */
-export const me = async () => {
-  const res = await axiosClient.get("/pracownicy/me");
-  return res.data;
+export const loginKlient = async (data) =>
+  axiosClient.post("/klienci/login", data).then((res) => res.data);
+export const loginPracownik = async (data) =>
+  axiosClient.post("/pracownicy/login", data).then((res) => res.data);
+export const logout = async () => axiosClient.post("/klienci/logout");
+export const me = async (role) => {
+  if (role === "KLIENT") return axiosClient.get("/klienci/me").then((res) => res.data);
+  return axiosClient.get("/pracownicy/me").then((res) => res.data);
 };

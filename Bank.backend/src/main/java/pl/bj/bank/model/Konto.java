@@ -23,10 +23,10 @@ public class Konto {
     private TypyKont typKonta;
 
     @Column(name = "saldo")
-    private Double saldo;
+    private Double saldo = 0.0;
 
     @Column(name = "waluta")
-    private String waluta;
+    private String waluta = "PLN";
 
     @Column(name = "data_otwarcia")
     private LocalDate dataOtwarcia;
@@ -35,10 +35,41 @@ public class Konto {
     private LocalDate dataZamkniecia;
 
     @Column(name = "oprocentowanie")
-    private Double oprocentowanie;
+    private Double oprocentowanie = 0.0;
 
     @Column(name = "status")
-    private String status;
+    private String status = "AKTYWNE";
 
-    // getters + setters
+    // 🔹 Ustawia konto jako aktywne
+    public void activate() {
+        this.status = "AKTYWNE";
+        this.dataZamkniecia = null;
+    }
+
+    // 🔹 Zablokuj konto
+    public void block() {
+        this.status = "ZABLOKOWANE";
+    }
+
+    // 🔹 Zamknij konto
+    public void close() {
+        this.status = "ZAMKNIĘTE";
+        this.dataZamkniecia = LocalDate.now();
+    }
+
+    // 🔹 Pomocnicza metoda ustawiająca datę otwarcia
+    public void openNow() {
+        this.dataOtwarcia = LocalDate.now();
+    }
+
+    // 🔹 Metoda ustawiająca saldo początkowe (domyślnie 0.0)
+    public void setInitialSaldo(Double saldo) {
+        this.saldo = saldo != null ? saldo : 0.0;
+    }
+
+    // 🔹 Metoda ustawiająca oprocentowanie
+    public void setOprocentowanie(Double oprocentowanie) {
+        this.oprocentowanie = oprocentowanie != null ? oprocentowanie : 0.0;
+    }
+
 }

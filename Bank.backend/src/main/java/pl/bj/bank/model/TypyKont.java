@@ -4,23 +4,21 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
+@Table(name = "typ_konta")
 @Data
-@Table(name = "typy_kont")
 public class TypyKont {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_typu")
-    private Integer idTypu;
-
-    @Column(name = "nazwa_typu")
+    private Long id;
+    
+    @Column(name = "nazwa_typu", length = 50)
     private String nazwaTypu;
-
-    @Column(name = "opis")
+    
+    @Column(name = "opis", length = 100)
     private String opis;
-
+    
     @Column(name = "oprocentowanie_std")
     private Double oprocentowanieStd;
-
-    // getters + setters
 }

@@ -21,26 +21,17 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/api/klienci/login",
-                    "/api/pracownicy/login",
-                    "/api/klienci/logout",
-                    "/api/pracownicy/logout"
-                ).permitAll()
-                .anyRequest().authenticated()
+                // 🔹 Wszystkie endpointy dostępne publicznie
+                .anyRequest().permitAll()
             )
-
             .formLogin(form -> form.disable())
-
             .logout(logout -> logout
                 .logoutUrl("/api/auth/logout")
                 .logoutSuccessHandler((req, res, auth) -> res.setStatus(200))
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
             )
-
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             );

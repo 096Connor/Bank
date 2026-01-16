@@ -14,12 +14,11 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.web.bind.annotation.*;
 import pl.bj.bank.dto.CreatePracownikRequest;
 import pl.bj.bank.dto.LoginRequest;
-import pl.bj.bank.dto.PracownikLoginRequest;
 import pl.bj.bank.dto.PracownikLoginResponse;
 import pl.bj.bank.model.Pracownik;
 import pl.bj.bank.service.PracownikService;
+
 import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/pracownicy")
@@ -29,34 +28,45 @@ public class PracownikController {
 
     private final PracownikService pracownikService;
 
- @PostMapping("/login")
-public ResponseEntity<?> login(@Valid @RequestBody PracownikLoginRequest req, HttpServletRequest request) {
-    log.info("Login attempt for pracownik: {}", req.getLogin());
-    var pracownikOpt = pracownikService.loginPracownik(req.getLogin(), req.getPassword());
-    if (pracownikOpt.isPresent()) {
-        var p = pracownikOpt.get();
-        
-        // ⭐ Ustaw autentykację
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-            p.getLogin(),
-            null,
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))
-        );
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-        
-        // Zapisz sesję
-        HttpSession session = request.getSession(true);
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-        
-        PracownikLoginResponse r = new PracownikLoginResponse();
-        r.setId(p.getIdPracownika());
-        r.setLogin(p.getLogin());
-        r.setImie(p.getImie());
-        r.setNazwisko(p.getNazwisko());
-        return ResponseEntity.ok(r);
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+        try {
+            log.info("Login attempt for pracownik: {}", request.getLogin());
+
+            // 🔹 Uwierzytelnienie
+            Pracownik p = pracownikService.loginPracownik(request.getLogin(), request.getPassword())
+                    .orElseThrow(() -> new RuntimeException("Niepoprawny login lub hasło"));
+
+            // 🔹 Tworzenie tokenu autoryzacyjnego
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                            p.getLogin(),
+                            null,
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))
+                    );
+
+            // 🔹 Ustawienie SecurityContext
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
+
+            // 🔹 Zapis sesji
+            HttpSession session = httpRequest.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+
+            // 🔹 Tworzenie odpowiedzi
+            PracownikLoginResponse response = new PracownikLoginResponse();
+            response.setId(p.getIdPracownika());
+            response.setLogin(p.getLogin());
+            response.setImie(p.getImie());
+            response.setNazwisko(p.getNazwisko());
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Błąd logowania pracownika: {}", e.getMessage());
+            return ResponseEntity.status(401).body("Niepoprawny login lub hasło");
+        }
     }
-    return ResponseEntity.status(401).build();
-}
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
@@ -65,7 +75,6 @@ public ResponseEntity<?> login(@Valid @RequestBody PracownikLoginRequest req, Ht
         if (session != null) {
             session.invalidate();
         }
-        pracownikService.logout(null);
         return ResponseEntity.ok("Wylogowano");
     }
 
@@ -78,22 +87,4 @@ public ResponseEntity<?> login(@Valid @RequestBody PracownikLoginRequest req, Ht
             return ResponseEntity.status(400).build();
         }
     }
-    @PostMapping("/api/pracownicy/login")
-public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest) {
-
-    Pracownik p = pracownikService.authenticate(request.getLogin(), request.getPassword());
-
-    UsernamePasswordAuthenticationToken auth =
-        new UsernamePasswordAuthenticationToken(p.getLogin(), null, List.of());
-
-    SecurityContext context = SecurityContextHolder.createEmptyContext();
-    context.setAuthentication(auth);
-    SecurityContextHolder.setContext(context);
-
-    HttpSession session = httpRequest.getSession(true);
-    session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-
-    return ResponseEntity.ok(p);
-}
-
 }

@@ -49,10 +49,14 @@ public class FullDataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("FullDataInitializer: Starting data initialization...");
 
-        // Check if data already exists
+        // Check if data already exists - sprawdzamy zarówno klientów jak i typy kont
         long klientCount = klientRepository.count();
+        long typyKontCount = typyKontRepository.count();
+        
         System.out.println("FullDataInitializer: Current klient count: " + klientCount);
-        if (klientCount > 0) {
+        System.out.println("FullDataInitializer: Current typyKont count: " + typyKontCount);
+        
+        if (klientCount > 0 && typyKontCount > 0) {
             System.out.println("FullDataInitializer: Data already exists, skipping initialization.");
             return;
         }
@@ -102,39 +106,7 @@ public class FullDataInitializer implements CommandLineRunner {
         oddzial2.setTelefon("12-345-67-89");
         oddzialRepository.save(oddzial2);
 
-        // 4. TypyKont
-        TypyKont typyKont1 = new TypyKont();
-        typyKont1.setNazwaTypu("Konto Osobiste");
-        typyKont1.setOpis("Standardowe konto osobiste");
-        typyKont1.setOprocentowanieStd(0.01);
-        typyKontRepository.save(typyKont1);
-
-        TypyKont typyKont2 = new TypyKont();
-        typyKont2.setNazwaTypu("Konto Oszczędnościowe");
-        typyKont2.setOpis("Konto z wyższym oprocentowaniem");
-        typyKont2.setOprocentowanieStd(0.03);
-        typyKontRepository.save(typyKont2);
-
-        TypyKont typyKont3 = new TypyKont();
-        typyKont3.setNazwaTypu("Konto Firmowe");
-        typyKont3.setOpis("Konto dla firm");
-        typyKont3.setOprocentowanieStd(0.005);
-        typyKontRepository.save(typyKont3);
-
-        // 5. TypyKart
-        TypyKart typyKart1 = new TypyKart();
-        typyKart1.setNazwa("Visa Classic");
-        typyKart1.setOpis("Standardowa karta Visa");
-        typyKart1.setLimitDziennyStd(1000.00);
-        typyKartRepository.save(typyKart1);
-
-        TypyKart typyKart2 = new TypyKart();
-        typyKart2.setNazwa("MasterCard Gold");
-        typyKart2.setOpis("Premium karta MasterCard");
-        typyKart2.setLimitDziennyStd(5000.00);
-        typyKartRepository.save(typyKart2);
-
-        // 3. Rola
+        // 3. Rola (przed pracownikami)
         Rola rola1 = new Rola();
         rola1.setNazwaRoli("Administrator");
         rola1.setOpis("Pełne uprawnienia");
@@ -150,6 +122,43 @@ public class FullDataInitializer implements CommandLineRunner {
         rola3.setOpis("Zarządzanie oddziałem");
         rolaRepository.save(rola3);
 
+        // 4. TypyKont (WAŻNE - muszą być przed kontami!)
+        System.out.println("FullDataInitializer: Creating TypyKont...");
+        
+        TypyKont typyKont1 = new TypyKont();
+        typyKont1.setNazwaTypu("Konto Osobiste");
+        typyKont1.setOpis("Standardowe konto osobiste");
+        typyKont1.setOprocentowanieStd(0.01);
+        typyKontRepository.save(typyKont1);
+        System.out.println("FullDataInitializer: Created TypyKont: Konto Osobiste");
+
+        TypyKont typyKont2 = new TypyKont();
+        typyKont2.setNazwaTypu("Konto Oszczędnościowe");
+        typyKont2.setOpis("Konto z wyższym oprocentowaniem");
+        typyKont2.setOprocentowanieStd(0.03);
+        typyKontRepository.save(typyKont2);
+        System.out.println("FullDataInitializer: Created TypyKont: Konto Oszczędnościowe");
+
+        TypyKont typyKont3 = new TypyKont();
+        typyKont3.setNazwaTypu("Konto Firmowe");
+        typyKont3.setOpis("Konto dla firm");
+        typyKont3.setOprocentowanieStd(0.005);
+        typyKontRepository.save(typyKont3);
+        System.out.println("FullDataInitializer: Created TypyKont: Konto Firmowe");
+
+        // 5. TypyKart
+        TypyKart typyKart1 = new TypyKart();
+        typyKart1.setNazwa("Visa Classic");
+        typyKart1.setOpis("Standardowa karta Visa");
+        typyKart1.setLimitDziennyStd(1000.00);
+        typyKartRepository.save(typyKart1);
+
+        TypyKart typyKart2 = new TypyKart();
+        typyKart2.setNazwa("MasterCard Gold");
+        typyKart2.setOpis("Premium karta MasterCard");
+        typyKart2.setLimitDziennyStd(5000.00);
+        typyKartRepository.save(typyKart2);
+
         // 6. Klient
         Klient klient1 = new Klient();
         klient1.setImie("Jan");
@@ -163,7 +172,7 @@ public class FullDataInitializer implements CommandLineRunner {
         klient1.setNrTel("123456789");
         klient1.setMail("jan.kowalski@example.com");
         klient1.setNarodowosc("Polska");
-        klient1.setPinHash(passwordEncoder.encode("examplehash1"));
+        klient1.setPinHash(passwordEncoder.encode("1234"));
         klientRepository.save(klient1);
 
         Klient klient2 = new Klient();
@@ -178,7 +187,7 @@ public class FullDataInitializer implements CommandLineRunner {
         klient2.setNrTel("987654321");
         klient2.setMail("anna.nowak@example.com");
         klient2.setNarodowosc("Polska");
-        klient2.setPinHash(passwordEncoder.encode("examplehash2"));
+        klient2.setPinHash(passwordEncoder.encode("1234"));
         klientRepository.save(klient2);
 
         Klient klient3 = new Klient();
@@ -193,7 +202,7 @@ public class FullDataInitializer implements CommandLineRunner {
         klient3.setNrTel("555666777");
         klient3.setMail("piotr.zielinski@example.com");
         klient3.setNarodowosc("Polska");
-        klient3.setPinHash(passwordEncoder.encode("examplehash3"));
+        klient3.setPinHash(passwordEncoder.encode("1234"));
         klientRepository.save(klient3);
 
         // 7. Pracownik
@@ -202,7 +211,7 @@ public class FullDataInitializer implements CommandLineRunner {
         pracownik1.setNazwisko("Admin");
         pracownik1.setStanowisko("Administrator");
         pracownik1.setLogin("admin");
-        pracownik1.setHasloHash(passwordEncoder.encode("adminpass"));
+        pracownik1.setHasloHash(passwordEncoder.encode("admin"));
         pracownik1.setOddzial(oddzial1);
         pracownik1.setDataZatrudnienia(LocalDate.of(2020, 1, 1));
         pracownik1.setAktywny(true);
@@ -213,7 +222,7 @@ public class FullDataInitializer implements CommandLineRunner {
         pracownik2.setNazwisko("Manager");
         pracownik2.setStanowisko("Manager");
         pracownik2.setLogin("manager");
-        pracownik2.setHasloHash(passwordEncoder.encode("managerpass"));
+        pracownik2.setHasloHash(passwordEncoder.encode("manager"));
         pracownik2.setOddzial(oddzial2);
         pracownik2.setDataZatrudnienia(LocalDate.of(2021, 6, 1));
         pracownik2.setAktywny(true);
@@ -224,7 +233,7 @@ public class FullDataInitializer implements CommandLineRunner {
         pracownik3.setNazwisko("Pracownik");
         pracownik3.setStanowisko("Pracownik");
         pracownik3.setLogin("pracownik");
-        pracownik3.setHasloHash(passwordEncoder.encode("pracownikpass"));
+        pracownik3.setHasloHash(passwordEncoder.encode("pracownik"));
         pracownik3.setOddzial(oddzial1);
         pracownik3.setDataZatrudnienia(LocalDate.of(2022, 3, 1));
         pracownik3.setAktywny(true);
@@ -338,8 +347,8 @@ public class FullDataInitializer implements CommandLineRunner {
         transakcja3.setStatus("ZAKONCZONA");
         transakcjeRepository.save(transakcja3);
 
-
-
-        System.out.println("FullDataInitializer: Data initialization completed.");
+        System.out.println("FullDataInitializer: Data initialization completed successfully!");
+        System.out.println("FullDataInitializer: Total TypyKont created: " + typyKontRepository.count());
+        System.out.println("FullDataInitializer: Total Klienci created: " + klientRepository.count());
     }
 }

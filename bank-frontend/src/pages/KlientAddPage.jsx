@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   TextField,
   Button,
@@ -9,13 +9,18 @@ import {
   MenuItem,
   Card,
   CardContent,
-  Divider
+  Divider,
+  useTheme
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { createKlient } from "../api/klientApi";
 import { createAdres } from "../api/adresApi";
+import ColorModeContext from "../theme/ColorModeContext";
 
 export default function KlientAddPage() {
+  const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
+
   const {
     register,
     handleSubmit,
@@ -36,9 +41,22 @@ export default function KlientAddPage() {
   });
   const { enqueueSnackbar } = useSnackbar();
 
+  const [newAdres, setNewAdres] = useState({
+    ulica: "",
+    nrDomu: "",
+    nrMieszkania: "",
+    miasto: "",
+    kodPocztowy: "",
+    wojewodztwo: "",
+    kraj: ""
+  });
+
+  const handleNewAdresChange = (field) => (e) => {
+    setNewAdres((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
   const onSubmit = async (form) => {
     try {
-      // Always create new address
       const adresPayload = {
         ulica: newAdres.ulica || null,
         nrDomu: newAdres.nrDomu || null,
@@ -77,7 +95,6 @@ export default function KlientAddPage() {
         kraj: ""
       });
     } catch (err) {
-      // If backend returns a 400 with a message (e.g. duplicate PESEL), show it
       const serverData = err?.response?.data;
       let message = "Błąd podczas zapisu klienta";
       if (serverData) {
@@ -92,22 +109,24 @@ export default function KlientAddPage() {
     }
   };
 
-  const [newAdres, setNewAdres] = useState({
-    ulica: "",
-    nrDomu: "",
-    nrMieszkania: "",
-    miasto: "",
-    kodPocztowy: "",
-    wojewodztwo: "",
-    kraj: ""
-  });
-
-  const handleNewAdresChange = (field) => (e) => {
-    setNewAdres((prev) => ({ ...prev, [field]: e.target.value }));
+  // Kolor dla inputów w zależności od trybu
+  const inputFocusStyle = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 1.5,
+      "&.Mui-focused fieldset": {
+        borderColor: "#667eea",
+        borderWidth: 2
+      }
+    }
   };
+
+  const labelColor = theme.palette.mode === "dark" ? "#f0f0f0" : "#1a1a1a";
+  const cardBg = theme.palette.mode === "dark" ? "#1e1e2f" : "#fff";
+  const cardBorder = theme.palette.mode === "dark" ? "1px solid #333" : "1px solid #e5e7eb";
 
   return (
     <Box>
+      {/* Nagłówek */}
       <Box sx={{ mb: 4 }}>
         <Typography
           variant="h4"
@@ -127,18 +146,16 @@ export default function KlientAddPage() {
         </Typography>
       </Box>
 
+      {/* Formularz */}
       <Card
-        sx={{
-          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-          border: "1px solid #e5e7eb"
-        }}
+        sx={{ boxShadow: "0 4px 12px rgba(0,0,0,0.1)", border: cardBorder, background: cardBg }}
       >
         <CardContent sx={{ p: 4 }}>
           <Box component="form" onSubmit={handleSubmit(onSubmit)}>
             <Grid container spacing={3}>
               {/* Dane osobowe */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: "#1a1a1a", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 2 }}>
                   👤 Dane osobowe
                 </Typography>
               </Grid>
@@ -151,15 +168,7 @@ export default function KlientAddPage() {
                   {...register("imie", { required: "Imię jest wymagane" })}
                   error={!!errors.imie}
                   helperText={errors.imie?.message}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -171,15 +180,7 @@ export default function KlientAddPage() {
                   {...register("nazwisko", { required: "Nazwisko jest wymagane" })}
                   error={!!errors.nazwisko}
                   helperText={errors.nazwisko?.message}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -193,15 +194,7 @@ export default function KlientAddPage() {
                   {...register("dataUrodzenia", { required: "Data urodzenia jest wymagana" })}
                   error={!!errors.dataUrodzenia}
                   helperText={errors.dataUrodzenia?.message}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -211,15 +204,7 @@ export default function KlientAddPage() {
                   fullWidth
                   variant="outlined"
                   {...register("narodowosc")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -229,7 +214,7 @@ export default function KlientAddPage() {
 
               {/* Dane bezpieczeństwa */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: "#1a1a1a", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 2 }}>
                   🔐 Dane bezpieczeństwa
                 </Typography>
               </Grid>
@@ -245,15 +230,7 @@ export default function KlientAddPage() {
                   })}
                   error={!!errors.pesel}
                   helperText={errors.pesel?.message}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -269,15 +246,7 @@ export default function KlientAddPage() {
                   })}
                   error={!!errors.pin}
                   helperText={errors.pin?.message}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -287,7 +256,7 @@ export default function KlientAddPage() {
 
               {/* Ustawienia konta */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: "#1a1a1a", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 2 }}>
                   ⚙️ Ustawienia konta
                 </Typography>
               </Grid>
@@ -299,15 +268,7 @@ export default function KlientAddPage() {
                   fullWidth
                   variant="outlined"
                   {...register("typKlienta", { required: true })}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 >
                   <MenuItem value="STANDARD">STANDARD</MenuItem>
                   <MenuItem value="VIP">VIP</MenuItem>
@@ -321,7 +282,7 @@ export default function KlientAddPage() {
 
               {/* Dane kontaktowe */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: "#1a1a1a", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 2 }}>
                   📞 Dane kontaktowe
                 </Typography>
               </Grid>
@@ -332,15 +293,7 @@ export default function KlientAddPage() {
                   fullWidth
                   variant="outlined"
                   {...register("nrTel")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -355,15 +308,7 @@ export default function KlientAddPage() {
                   })}
                   error={!!errors.mail}
                   helperText={errors.mail?.message}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -373,7 +318,7 @@ export default function KlientAddPage() {
 
               {/* Adres */}
               <Grid item xs={12}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: "#1a1a1a", mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: labelColor, mb: 2 }}>
                   📍 Adres
                 </Typography>
               </Grid>
@@ -385,15 +330,7 @@ export default function KlientAddPage() {
                   variant="outlined"
                   value={newAdres.ulica}
                   onChange={handleNewAdresChange("ulica")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -404,15 +341,7 @@ export default function KlientAddPage() {
                   variant="outlined"
                   value={newAdres.nrDomu}
                   onChange={handleNewAdresChange("nrDomu")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -423,15 +352,7 @@ export default function KlientAddPage() {
                   variant="outlined"
                   value={newAdres.nrMieszkania}
                   onChange={handleNewAdresChange("nrMieszkania")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -442,15 +363,7 @@ export default function KlientAddPage() {
                   variant="outlined"
                   value={newAdres.miasto}
                   onChange={handleNewAdresChange("miasto")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -461,15 +374,7 @@ export default function KlientAddPage() {
                   variant="outlined"
                   value={newAdres.kodPocztowy}
                   onChange={handleNewAdresChange("kodPocztowy")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -480,15 +385,7 @@ export default function KlientAddPage() {
                   variant="outlined"
                   value={newAdres.wojewodztwo}
                   onChange={handleNewAdresChange("wojewodztwo")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
@@ -499,19 +396,11 @@ export default function KlientAddPage() {
                   variant="outlined"
                   value={newAdres.kraj}
                   onChange={handleNewAdresChange("kraj")}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 1.5,
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#667eea",
-                        borderWidth: 2
-                      }
-                    }
-                  }}
+                  sx={inputFocusStyle}
                 />
               </Grid>
 
-              {/* Submit Button */}
+              {/* Submit */}
               <Grid item xs={12}>
                 <Button
                   type="submit"

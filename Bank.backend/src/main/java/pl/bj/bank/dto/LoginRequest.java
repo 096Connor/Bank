@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class LoginRequest {
     private String login;
-    private String haslo;
+    private String password; // Zmienione z "haslo" na "password"
 }

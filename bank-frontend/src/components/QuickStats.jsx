@@ -1,7 +1,7 @@
 import React from "react";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography, Box } from "@mui/material";
 
-export default function QuickStats({ accounts, theme, lastTransaction }) {
+export default function QuickStats({ accounts = [], theme, lastTransaction }) {
   const totalSaldo = accounts.reduce((s, a) => s + (a.saldo || 0), 0);
 
   const lastTransactionValue = lastTransaction
@@ -20,7 +20,11 @@ export default function QuickStats({ accounts, theme, lastTransaction }) {
       })} ${accounts[0]?.waluta || "PLN"}`,
       icon: "💰"
     },
-    { label: "Ostatnia transakcja", value: lastTransactionValue, icon: "📊" }
+    {
+      label: "Ostatnia transakcja",
+      value: lastTransactionValue,
+      icon: "📊"
+    }
   ];
 
   return (
@@ -30,20 +34,45 @@ export default function QuickStats({ accounts, theme, lastTransaction }) {
           <Paper
             sx={{
               p: 3,
-              backgroundColor: theme?.palette?.background?.paper,
-              border: `1px solid ${theme?.palette?.divider || "#eee"}`,
               borderRadius: 2,
+              border: `1px solid ${theme?.palette?.divider || "#eee"}`,
+              background:
+                theme?.palette?.mode === "dark"
+                  ? "rgba(255,255,255,0.05)"
+                  : theme?.palette?.background?.paper,
               transition: "all 0.3s ease",
-              "&:hover": { transform: "translateY(-4px)", boxShadow: theme?.shadows?.[4] }
+              cursor: "default",
+              "&:hover": {
+                transform: "translateY(-4px)",
+                boxShadow: theme?.shadows?.[4]
+              }
             }}
           >
+            <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: theme?.palette?.primary?.main,
+                  fontWeight: 600,
+                  mr: 1
+                }}
+              >
+                {stat.icon}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={{ color: theme?.palette?.text.secondary, fontWeight: 600 }}
+              >
+                {stat.label}
+              </Typography>
+            </Box>
             <Typography
-              variant="body2"
-              sx={{ color: theme?.palette?.primary?.main, fontWeight: 600, mb: 1 }}
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                color: theme?.palette?.mode === "dark" ? "#fff" : theme?.palette?.primary?.main
+              }}
             >
-              {stat.icon} {stat.label}
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: 700, color: theme?.palette?.primary?.main }}>
               {stat.value}
             </Typography>
           </Paper>
